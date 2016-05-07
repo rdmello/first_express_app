@@ -5,6 +5,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+// MondoDB interfacing code
+var mongo = require('mongodb');
+var monk = require('monk');
+
+var MNGU = process.env.FIRST_EXPRESS_APP_UNAME;
+var MNGP = process.env.FIRST_EXPRESS_APP_PASSW;
+var db = monk(MNGU+':'+MNGP+'@localhost:27017/first_express_app');
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -21,6 +29,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Make the DB accessible to the router
+app.use( function (req, res, next) {
+    req.db = db; 
+    next(); 
+}); 
 
 app.use('/', routes);
 app.use('/users', users);
