@@ -1,4 +1,5 @@
 var express = require('express');
+var passport = require('passport');
 var router = express.Router();
 
 /* GET home page. */
@@ -42,5 +43,22 @@ router.post('/adduser', function (req, res) {
         else { res.redirect("userlist");}
     }); 
 }); 
+
+router.get('/login', function (req, res) {
+    res.render('login', {title: "Login!"});
+}); 
+
+router.post('/login', passport.authenticate('local', {failureRedirect: 'login'}), function (req, res) {
+    res.redirect('profile'); 
+}); 
+
+router.get('/logout', function (req, res) {
+    req.logout(); 
+    res.redirect('/'); 
+}); 
+
+router.get('/profile', require('connect-ensure-login').ensureLoggedIn(), function (req, res) {
+    res.render('profile', {user: req.user, title: "Your Profile!"}); 
+});
 
 module.exports = router;
