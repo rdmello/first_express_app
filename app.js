@@ -62,6 +62,7 @@ app.use(passport.session());
 // Make the DB accessible to the router
 app.use( function (req, res, next) {
     req.db = db; 
+    req.db_test = db_test; 
     next(); 
 }); 
 

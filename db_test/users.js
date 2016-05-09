@@ -25,3 +25,10 @@ exports.findByUsername = function(username, cb) {
         return cb(null, null);
     });
 }
+
+exports.insertNew = function (username, password) {
+
+    process.nextTick(function() {
+        records.push({id: records.length+1, username: username, password: password}); 
+    }); 
+}

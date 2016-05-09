@@ -61,4 +61,14 @@ router.get('/profile', require('connect-ensure-login').ensureLoggedIn(), functio
     res.render('profile', {user: req.user, title: "Your Profile!"}); 
 });
 
+router.get('/newaccount', function (req, res) {
+    res.render('newaccount', {title: "Make New Account!"});
+});
+
+router.post('/newaccount', function (req, res) {
+    var db_test = req.db_test; 
+    db_test.users.insertNew(req.body.username, req.body.password);
+    res.redirect("userlist");
+}); 
+
 module.exports = router;
