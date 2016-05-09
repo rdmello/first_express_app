@@ -8,27 +8,6 @@ var bodyParser = require('body-parser');
 // Passport authentication
 var passport = require('passport'); 
 var Strategy = require('passport-local').Strategy;
-var db_test = require('./db_test'); 
-
-passport.use(new Strategy(function(username, password, cb) {
-    db_test.users.findByUsername(username, function(err, user) {
-        if (err) { return cb(err); }
-        if (!user) { return cb(null, false); }
-        if (user.password != password) { return cb(null, false); }
-        return cb(null, user);
-    });
-}));
-
-passport.serializeUser(function(user, cb) {
-    cb(null, user.id);
-});
-
-passport.deserializeUser(function(id, cb) {
-    db_test.users.findById(id, function (err, user) {
-        if (err) { return cb(err); }
-        cb(null, user);
-    });
-});
 
 // MondoDB interfacing code
 var mongo = require('mongodb');
@@ -37,6 +16,32 @@ var monk = require('monk');
 var MNGU = process.env.FIRST_EXPRESS_APP_UNAME;
 var MNGP = process.env.FIRST_EXPRESS_APP_PASSW;
 var db = monk(MNGU+':'+MNGP+'@localhost:27017/first_express_app');
+
+passport.use(new Strategy(function(username, password, cb) {
+    var collection = db.get('actualUserCollection');
+    collection.findOne({username: username}, function (err, user) {
+        console.log("Passport Login Strategy"); 
+        console.log(user); 
+        if (err) { return cb(err); }
+        if (!user) { return cb(null, false); }
+        if (user.password != password) { return cb(null, false); }
+        return cb(null, user);
+    }); 
+}));
+
+passport.serializeUser(function(user, cb) {
+    cb(null, user._id);
+});
+
+passport.deserializeUser(function(id, cb) {
+    var collection = db.get('actualUserCollection');
+    collection.findOne({_id: id}, function (err, user) {
+        console.log("Passport Deserialize"); 
+        console.log(user); 
+        if (err) { return cb(err); }
+        cb(null, user);
+    }); 
+});
 
 var app = express();
 app.set('trust proxy', 'loopback'); 
@@ -62,7 +67,6 @@ app.use(passport.session());
 // Make the DB accessible to the router
 app.use( function (req, res, next) {
     req.db = db; 
-    req.db_test = db_test; 
     next(); 
 }); 
 

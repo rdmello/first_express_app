@@ -3,4 +3,16 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+  a(href='newaccount') Create a new account!
+  br
+  br
+  a(href='login') Login to your account!
+  br
+  br
+  a(href='profile') See your profile
+  br
+  br
+  a(href='logout') Log out of your account
+  br
+  br
   p Time is #{(function(){var d=new Date(); return d.getSeconds()})()}

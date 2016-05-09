@@ -16,7 +16,7 @@ router.get('/helloworld', function(req, res, next) {
 router.get('/userlist', function(req, res, next) {
     var db = req.db;
     var collection = db.get('usercollection');
-    collection.find({},{},function(e,docs){
+    collection.find({},function(e,docs){
         res.render('userlist', {
             userlist: docs,
             title: 'User List'
@@ -54,10 +54,10 @@ router.post('/login', passport.authenticate('local', {failureRedirect: 'login'})
 
 router.get('/logout', function (req, res) {
     req.logout(); 
-    res.redirect('/'); 
+    res.redirect('login'); 
 }); 
 
-router.get('/profile', require('connect-ensure-login').ensureLoggedIn(), function (req, res) {
+router.get('/profile', require('connect-ensure-login').ensureLoggedIn('login'), function (req, res) {
     res.render('profile', {user: req.user, title: "Your Profile!"}); 
 });
 
@@ -66,9 +66,16 @@ router.get('/newaccount', function (req, res) {
 });
 
 router.post('/newaccount', function (req, res) {
-    var db_test = req.db_test; 
-    db_test.users.insertNew(req.body.username, req.body.password);
-    res.redirect("userlist");
+    var db = req.db; 
+    var collection = db.get('actualUserCollection'); 
+    collection.insert({
+        _id: collection.id(),
+        username: req.body.username, 
+        password: req.body.password
+    }, function (err, doc) {
+        if (err) {res.send("There was a problem adding the information")}
+        else { res.redirect("login");}
+    }); 
 }); 
 
 module.exports = router;
