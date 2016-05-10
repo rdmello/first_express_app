@@ -48,16 +48,20 @@ router.get('/login', function (req, res) {
     res.render('login', {title: "Login!"});
 }); 
 
-router.post('/login', passport.authenticate('local', {failureRedirect: 'login'}), function (req, res) {
-    res.redirect('profile'); 
-}); 
+router.post('/login', passport.authenticate('local', {
+    successRedirect: 'profile', 
+    failureRedirect: 'login'
+})); 
 
 router.get('/logout', function (req, res) {
     req.logout(); 
     res.redirect('login'); 
 }); 
 
-router.get('/profile', require('connect-ensure-login').ensureLoggedIn('login'), function (req, res) {
+router.get('/profile', function(req, res, next) {
+    if (req.isAuthenticated()) {return next();} 
+    else res.redirect('login'); 
+}, function (req, res) {
     res.render('profile', {user: req.user, title: "Your Profile!"}); 
 });
 

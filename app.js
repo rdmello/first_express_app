@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 
 // Passport authentication
 var passport = require('passport'); 
-var Strategy = require('passport-local').Strategy;
+var LocalStrategy = require('passport-local').Strategy;
 
 // MondoDB interfacing code
 var mongo = require('mongodb');
@@ -17,29 +17,29 @@ var MNGU = process.env.FIRST_EXPRESS_APP_UNAME;
 var MNGP = process.env.FIRST_EXPRESS_APP_PASSW;
 var db = monk(MNGU+':'+MNGP+'@localhost:27017/first_express_app');
 
-passport.use(new Strategy(function(username, password, cb) {
+passport.use(new LocalStrategy(function(username, password, done) {
     var collection = db.get('actualUserCollection');
     collection.findOne({username: username}, function (err, user) {
         console.log("Passport Login Strategy"); 
         console.log(user); 
-        if (err) { return cb(err); }
-        if (!user) { return cb(null, false); }
-        if (user.password != password) { return cb(null, false); }
-        return cb(null, user);
+        if (err) { return done(err); }
+        if (!user) { return done(null, false, {message: "Incorrect username"}); }
+        if (user.password != password) { return done(null, false, {message: "Incorrect password"}); }
+        return done(null, user);
     }); 
 }));
 
-passport.serializeUser(function(user, cb) {
-    cb(null, user._id);
+passport.serializeUser(function(user, done) {
+    done(null, user._id);
 });
 
-passport.deserializeUser(function(id, cb) {
+passport.deserializeUser(function(id, done) {
     var collection = db.get('actualUserCollection');
     collection.findOne({_id: id}, function (err, user) {
         console.log("Passport Deserialize"); 
         console.log(user); 
-        if (err) { return cb(err); }
-        cb(null, user);
+        if (err) { return done(err); }
+        done(null, user);
     }); 
 });
 
@@ -52,7 +52,7 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+app.use(logger('combined'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
