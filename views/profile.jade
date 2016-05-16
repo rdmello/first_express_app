@@ -7,3 +7,14 @@ block content
     ID: #{user.id}
     Username: #{user.username}
   p Time is #{(function(){var d=new Date(); return d.getSeconds()})()}
+
+  form(action="")
+    input#m(autocomplete="off")
+    button Send
+
+  ul#messages
+
+  script(src="socket.io/socket.io.js")
+  script.
+    localStorage.debug = '*';
+    var socket = io('https://rylan.coffee/first_express_app/socket.io', {path: '/first_express_app/socket.io'});
