@@ -8,13 +8,15 @@ block content
     Username: #{user.username}
   p Time is #{(function(){var d=new Date(); return d.getSeconds()})()}
 
-  form(action="")
+  form(action="#")
     input#m(autocomplete="off")
-    button Send
+    button#mybtn Send
 
   ul#messages
 
   script(src="socket.io/socket.io.js")
+  script(src="/resources/jquery.js")
   script.
     localStorage.debug = '*';
     var socket = io('https://rylan.coffee/first_express_app/socket.io', {path: '/first_express_app/socket.io'});
+    $('#mybtn').click(function(){console.log('af'); socket.emit('chat message', $('#m').val()); $('#m').val('');return false;});
