@@ -62,7 +62,11 @@ router.get('/profile', function(req, res, next) {
     if (req.isAuthenticated()) {return next();} 
     else res.redirect('login'); 
 }, function (req, res) {
-    res.render('profile', {user: req.user, title: "Your Profile!"}); 
+    res.render('profile', {
+        user: req.user, 
+        title: "Your Profile!",
+        userString: JSON.stringify(req.user)
+    }); 
 });
 
 router.get('/newaccount', function (req, res) {
