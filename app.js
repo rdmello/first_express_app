@@ -57,6 +57,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.mysockets = require('./mysockets.js'); 
 
 // Passport authentication setup
 var ESSECRET = process.env.FIRST_EXPRESS_APP_EXPRESS_SESSION_SECRET;
