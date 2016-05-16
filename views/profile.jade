@@ -17,6 +17,6 @@ block content
   script(src="socket.io/socket.io.js")
   script(src="/resources/jquery.js")
   script.
-    localStorage.debug = '*';
     var socket = io('https://rylan.coffee/first_express_app/socket.io', {path: '/first_express_app/socket.io'});
     $('#mybtn').click(function(){console.log('af'); socket.emit('chat message', $('#m').val()); $('#m').val('');return false;});
+    socket.on('chat message', function(msg) {console.log(msg);$('#messages').append($('<li>').text(msg))});

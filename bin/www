@@ -36,18 +36,13 @@ nsp.on('connection', function (socket) {
     console.log('SOCKET.IO: A user connected!'); 
     socket.on('chat message', function (msg) {
         console.log('SOCKET.IO: Chat message: '+msg);
+        nsp.emit('chat message', msg);
     });
     socket.on('disconnect', function () {
         console.log('SOCKET.IO: User disconnected'); 
     }); 
 }); 
-/*
-io.on('connection', function (socket) {
-    socket.on('chat message', function (msg) {
-        console.log('SOCKET.IO: Chat message: '+msg);
-    });
-}); 
-*/
+
 /**
  * Normalize a port into a number, string, or false.
  */
