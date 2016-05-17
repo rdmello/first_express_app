@@ -4,7 +4,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Express' });
+    res.render('index', { title: 'Express', user: req.user});
 });
 
 /* GET Hello World page. */
@@ -44,7 +44,10 @@ router.post('/adduser', function (req, res) {
     }); 
 }); 
 
-router.get('/login', function (req, res) {
+router.get('/login', function(req, res, next) {
+    if (req.isAuthenticated()) {res.redirect('profile')} 
+    else return next(); 
+}, function (req, res) {
     res.render('login', {title: "Login!"});
 }); 
 
@@ -55,7 +58,7 @@ router.post('/login', passport.authenticate('local', {
 
 router.get('/logout', function (req, res) {
     req.logout(); 
-    res.redirect('login'); 
+    res.redirect('/first_express_app'); 
 }); 
 
 router.get('/profile', function(req, res, next) {
@@ -69,7 +72,10 @@ router.get('/profile', function(req, res, next) {
     }); 
 });
 
-router.get('/newaccount', function (req, res) {
+router.get('/newaccount', function(req, res, next) {
+    if (req.isAuthenticated()) {res.redirect('profile')} 
+    else return next(); 
+}, function (req, res) {
     res.render('newaccount', {title: "Make New Account!"});
 });
 

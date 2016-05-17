@@ -7,6 +7,12 @@ block content
     ID: #{user.id}
     Username: #{user.username}
   p Time is #{(function(){var d=new Date(); return d.getSeconds()})()}
+  a(href='/first_express_app') << Back to Homepage
+  br
+  br
+  a(href='logout') << Logout!
+
+  h1 Chat!
 
   form(action="#")
     input#m(autocomplete="off")
