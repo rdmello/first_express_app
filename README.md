@@ -14,6 +14,8 @@ Todo:
 
 4. Replace Jade with handlebars or some better HTML preprocessor. 
 
+4. Add Captcha to login pages to stop spammers
+
 Cool things to try out: 
 
 1. Typescript

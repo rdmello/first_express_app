@@ -60,7 +60,32 @@ a {
     line-height: 20px;
 }
 
-input[type="text"] {
+/*input[type="text"] {*/
+input {
+    font-family: Georgia,Times,Times New Roman,serif;
+    font-size: 14px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+button {
+    font-family: Georgia,Times,Times New Roman,serif;
+    font-size: 14px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+li {
+    font-family: Georgia,Times,Times New Roman,serif;
+    font-size: 14px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+ul {
     font-family: Georgia,Times,Times New Roman,serif;
     font-size: 14px;
     font-style: normal;
