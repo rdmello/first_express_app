@@ -61,7 +61,15 @@ app.mysockets = require('./mysockets.js');
 
 // Passport authentication setup
 var ESSECRET = process.env.FIRST_EXPRESS_APP_EXPRESS_SESSION_SECRET;
-app.use(require('express-session')({secret: ESSECRET, resave: false, saveUninitialized: false})); 
+var session = require('express-session'); 
+var MongoStore = require('connect-mongo')(session); 
+app.use(session({
+    secret: ESSECRET, 
+    store: new MongoStore ({
+        url: 'mongodb://'+MNGU+':'+MNGP+'@localhost:27017/first_express_app'
+    })
+})); 
+// app.use(require('express-session')({secret: ESSECRET, resave: false, saveUninitialized: false})); 
 app.use(passport.initialize()); 
 app.use(passport.session()); 
 
