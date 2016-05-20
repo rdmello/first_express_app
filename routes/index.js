@@ -1,4 +1,6 @@
 var express = require('express');
+var https = require('https');
+var querystring = require('querystring');
 var passport = require('passport');
 var router = express.Router();
 
@@ -82,14 +84,58 @@ router.get('/newaccount', function(req, res, next) {
 router.post('/newaccount', function (req, res) {
     var db = req.db; 
     var collection = db.get('actualUserCollection'); 
-    collection.insert({
-        _id: collection.id(),
-        username: req.body.username, 
-        password: req.body.password
-    }, function (err, doc) {
-        if (err) {res.send("There was a problem adding the information")}
-        else { res.redirect("login");}
+    
+    // Recaptcha setup
+    var recapt = req.body['g-recaptcha-response'];
+    var secret = process.env.FIRST_EXPRESS_APP_RECAPTCHA_SECRET;
+    var post_data = querystring.stringify({
+        'secret': secret,
+        'response': recapt, 
+        'remoteip': req.ip
+    });
+    console.log(post_data); 
+    var options = {
+        host: 'www.google.com',
+        port: 443,
+        path: '/recaptcha/api/siteverify',
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded', 
+            'Content-Length': post_data.length
+        }
+    };
+    var captcha_status = false; 
+    var recapt_req = https.request(options, function (recapt_res) {
+        console.log('status: ' + recapt_res.statusCode); 
+        console.log('headers: ' + JSON.stringify(recapt_res.headers)); 
+        recapt_res.setEncoding('utf8'); 
+        recapt_res.on('data', function (chunk) {
+            console.log('BODY: ' + chunk); 
+            var recapt_result = JSON.parse(chunk); 
+            captcha_status = recapt_result.success; 
+            console.log("CAPTCHA STATUS IS: "+captcha_status); 
+            if (captcha_status) {
+                collection.insert({
+                    _id: collection.id(),
+                    username: req.body.username, 
+                    password: req.body.password
+                }, function (err, doc) {
+                    if (err) {res.send("There was a problem adding the information")}
+                    else { res.redirect("login");}
+                }); 
+            } else {
+                res.redirect("login");
+            };
+        }); 
+        recapt_res.on('end', function () {
+            console.log("No more data in response."); 
+        }); 
     }); 
+    recapt_req.on('error', function (e) {
+        console.log("Problem with Recaptcha request: "+ e.message); 
+    }); 
+    recapt_req.write(post_data); 
+    recapt_req.end();     
 }); 
 
 module.exports = router;

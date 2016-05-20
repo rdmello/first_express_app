@@ -14,7 +14,9 @@ Todo:
 
 4. Replace Jade with handlebars or some better HTML preprocessor. 
 
-4. Add Captcha to login pages to stop spammers
+5. Sanitize form fields and inputs
+
+6. Provide error messages on login/signup.
 
 Cool things to try out: 
 
